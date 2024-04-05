@@ -46,8 +46,8 @@ class TimerService : Service() {
 
     override fun onBind(intent: Intent?): IBinder? = null
 
-    fun OnTimerServiceCallback.addListener() {
-        onTimerServiceCallback = this
+    fun addListener(callback: OnTimerServiceCallback) {
+        onTimerServiceCallback = callback
     }
 
     private fun continueTimer() {

@@ -2,8 +2,8 @@ package ir.hoseinsa.eyecareapp.utils
 
 interface OnTimerServiceCallback {
 
-    fun onBreakTimer(isBreak: Boolean): Boolean
+    fun onBreakTimer(isBreak: Boolean)
 
-    fun onTick(tick: Long): Long
+    fun onTick(tick: Long)
 
 }
