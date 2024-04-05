@@ -38,6 +38,9 @@ class TimerScreenViewModel: ViewModel() {
     }
 
     private fun subscribeToTimerServiceCallBack() {
+        state = state.copy(
+            isStarted = true
+        )
         onTimerServiceCallback = object : OnTimerServiceCallback {
             override fun onBreakTimer(isBreak: Boolean) {
                 state = state.copy(
@@ -54,7 +57,10 @@ class TimerScreenViewModel: ViewModel() {
         }
     }
 
-    private fun stopTimer(context: Context) = context.stopService(serviceIntent)
+    private fun stopTimer(context: Context) {
+        context.stopService(serviceIntent)
+        state = TimerScreenState()
+    }
 
 
 }

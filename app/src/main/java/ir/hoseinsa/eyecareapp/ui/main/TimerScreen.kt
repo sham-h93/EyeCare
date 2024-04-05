@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -21,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -31,14 +33,22 @@ import androidx.compose.ui.unit.sp
 import ir.hoseinsa.eyecareapp.R
 import ir.hoseinsa.eyecareapp.ui.components.EyeCareTopBar
 import ir.hoseinsa.eyecareapp.ui.theme.EyeCareAppTheme
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun TimerScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: TimerScreenViewModel = koinViewModel()
 ) {
-    Scaffold(modifier = modifier.fillMaxSize(), topBar = {
-        EyeCareTopBar(title = "20-20-20")
-    }) { paddingValues ->
+
+    val state = viewModel.state
+    val context = LocalContext.current
+
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        topBar = {
+            EyeCareTopBar(title = "20-20-20")
+        }) { paddingValues ->
         Column(
             modifier = Modifier
                 .padding(paddingValues)
@@ -67,24 +77,44 @@ fun TimerScreen(
                 Text(
                     fontSize = 68.sp,
                     fontWeight = FontWeight.Light,
-                    text = "10:32"
+                    text = state.time
                 )
                 Text(
                     modifier = Modifier.offset(y = 64.dp),
                     fontSize = 24.sp,
-                    text = "CONTINUE"
+                    text = when (state.isBreak) {
+                        true -> "BREAK"
+                        false -> "CONTINUE"
+                    }
                 )
             }
             Spacer(modifier = Modifier.height(32.dp))
             Button(
                 modifier = Modifier.fillMaxWidth(.6f),
                 shape = MaterialTheme.shapes.large,
-                onClick = { /*TODO*/ }
+                colors = ButtonColors(
+                    containerColor = when(state.isStarted) {
+                        true -> MaterialTheme.colorScheme.primary
+                        false -> MaterialTheme.colorScheme.primary
+                    },
+                    contentColor = MaterialTheme.colorScheme.surface,
+                    disabledContainerColor = Color.Unspecified,
+                    disabledContentColor = Color.Unspecified,
+                ),
+                onClick = {
+                    when(state.isStarted) {
+                        true -> viewModel.onEvent(TimerScreenEvent.stopTimer(context))
+                        false -> viewModel.onEvent(TimerScreenEvent.startTimer(context))
+                    }
+                }
             ) {
                 Text(
                     modifier = Modifier.padding(8.dp),
                     fontSize = 24.sp,
-                    text = "START"
+                    text = when (state.isBreak) {
+                        true -> "STOP"
+                        false -> "START"
+                    }
                 )
             }
             Spacer(modifier = Modifier.height(48.dp))

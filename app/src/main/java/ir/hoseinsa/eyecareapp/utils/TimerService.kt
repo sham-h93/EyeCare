@@ -33,11 +33,12 @@ class TimerService : Service() {
         )
         try {
             ServiceCompat.startForeground(this, serviceId, notification, serviceType)
-            intent?.let {
-                when {
-                    it.hasExtra(START_TOMER) -> continueTimer()
-                }
-            }
+            continueTimer()
+//            intent?.let {
+//                when {
+//                    it.hasExtra(START_TOMER) ->
+//                }
+//            }
         } catch (e: Exception) {
             e.printStackTrace()
         }

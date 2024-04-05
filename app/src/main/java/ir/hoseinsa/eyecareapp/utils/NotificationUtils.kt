@@ -17,7 +17,7 @@ object NotificationUtils {
         content: String
     ): Notification {
         createNotificationChannel()
-        return NotificationCompat.Builder(this, "873632")
+        return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle(title)
             .setContentText(content)
             .build()

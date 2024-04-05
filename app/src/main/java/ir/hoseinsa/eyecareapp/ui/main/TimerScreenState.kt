@@ -1,6 +1,7 @@
 package ir.hoseinsa.eyecareapp.ui.main
 
 data class TimerScreenState(
-    val isBreak: Boolean? = false,
-    val time: String? = ""
+    val isStarted: Boolean = false,
+    val isBreak: Boolean = false,
+    val time: String = ""
 )
