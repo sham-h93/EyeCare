@@ -16,12 +16,8 @@ class TimerService : Service() {
     private val serviceType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
         ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE else 0
 
-    private val CONTINUE_TIMER_MILLISECONDS = 10_000L
-    private val BREAK_TIMER_MILLISECODS = 5_000L
-
-    companion object {
-        const val START_TOMER = "startTimer"
-    }
+    private val CONTINUE_TIMER_MILLISECONDS = 40_000L
+    private val BREAK_TIMER_MILLISECODS = 20_000L
 
     override fun onCreate() {}
 
@@ -34,11 +30,6 @@ class TimerService : Service() {
         try {
             ServiceCompat.startForeground(this, serviceId, notification, serviceType)
             continueTimer()
-//            intent?.let {
-//                when {
-//                    it.hasExtra(START_TOMER) ->
-//                }
-//            }
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -63,7 +54,7 @@ class TimerService : Service() {
             onFinish = {
                 breakTimer()
             }
-        )
+        ).start()
     }
 
     private fun breakTimer() {
@@ -78,7 +69,7 @@ class TimerService : Service() {
             onFinish = {
                 continueTimer()
             }
-        )
+        ).start()
     }
 
     override fun onDestroy() {

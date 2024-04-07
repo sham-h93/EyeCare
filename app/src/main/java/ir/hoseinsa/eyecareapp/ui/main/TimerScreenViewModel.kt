@@ -8,8 +8,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import ir.hoseinsa.eyecareapp.utils.OnTimerServiceCallback
+import ir.hoseinsa.eyecareapp.utils.TimeUtils.toTimeFormat
 import ir.hoseinsa.eyecareapp.utils.TimerService
-import ir.hoseinsa.eyecareapp.utils.toTimeFormat
 
 class TimerScreenViewModel: ViewModel() {
 
