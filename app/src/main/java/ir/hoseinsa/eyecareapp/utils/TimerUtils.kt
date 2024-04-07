@@ -2,6 +2,7 @@ package ir.hoseinsa.eyecareapp.utils
 
 import android.os.CountDownTimer
 import android.util.Log
+import ir.hoseinsa.eyecareapp.utils.TimeUtils.toTimeFormat
 
 object TimerUtils {
 
@@ -17,7 +18,7 @@ object TimerUtils {
             timer = object : CountDownTimer(millisInFuture, MILLIS_INTERVAL) {
                 override fun onTick(millisUntilFinished: Long) {
                     onTick(millisUntilFinished)
-                    Log.d(::TimerService.name, "onTick: $millisUntilFinished")
+                    Log.e(::TimerService.name, "onTick: ${millisUntilFinished.toTimeFormat()}")
                 }
 
                 override fun onFinish() {
