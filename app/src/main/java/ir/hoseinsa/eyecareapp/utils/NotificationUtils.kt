@@ -25,7 +25,7 @@ object NotificationUtils {
 
     private fun Context.createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val importance = NotificationManager.IMPORTANCE_HIGH
+            val importance = NotificationManager.IMPORTANCE_MAX
             val mChannel = NotificationChannel(CHANNEL_ID, CHANNEL_NAME, importance)
             val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(mChannel)
