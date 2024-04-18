@@ -19,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -43,6 +44,10 @@ fun TimerScreen(
 
     val state = viewModel.state
     val context = LocalContext.current
+
+    LaunchedEffect(key1 = true) {
+        viewModel.onEvent(TimerScreenEvent.StartService(context))
+    }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -93,8 +98,8 @@ fun TimerScreen(
                 modifier = Modifier.fillMaxWidth(.6f),
                 shape = MaterialTheme.shapes.large,
                 colors = ButtonColors(
-                    containerColor = when(state.isStarted) {
-                        true -> MaterialTheme.colorScheme.primary
+                    containerColor = when(state.isBreak) {
+                        true -> MaterialTheme.colorScheme.error
                         false -> MaterialTheme.colorScheme.primary
                     },
                     contentColor = MaterialTheme.colorScheme.surface,
@@ -103,8 +108,8 @@ fun TimerScreen(
                 ),
                 onClick = {
                     when(state.isStarted) {
-                        true -> viewModel.onEvent(TimerScreenEvent.stopTimer(context))
-                        false -> viewModel.onEvent(TimerScreenEvent.startTimer(context))
+                        true -> viewModel.onEvent(TimerScreenEvent.StopTimer(context))
+                        false -> viewModel.onEvent(TimerScreenEvent.StartTimer(context))
                     }
                 }
             ) {

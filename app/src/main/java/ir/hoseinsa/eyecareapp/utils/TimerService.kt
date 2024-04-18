@@ -7,11 +7,11 @@ import android.os.Build
 import android.os.IBinder
 import android.widget.Toast
 import androidx.core.app.ServiceCompat
+import ir.hoseinsa.eyecareapp.ui.main.TimerScreenViewModel
 import ir.hoseinsa.eyecareapp.utils.NotificationUtils.notificationBuilder
 
-class TimerService : Service() {
+class TimerService : Service(), OnServiceCallback {
 
-    private var onTimerServiceCallback: OnTimerServiceCallback? = null
     private var serviceId: Int = 0
     private val serviceType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
         ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE else 0
@@ -19,7 +19,18 @@ class TimerService : Service() {
     private val CONTINUE_TIMER_MILLISECONDS = 40_000L
     private val BREAK_TIMER_MILLISECODS = 20_000L
 
-    override fun onCreate() {}
+    companion object {
+
+        private var onTimerServiceCallback: OnTimerServiceCallback? = null
+        fun addListener(callback: OnTimerServiceCallback) {
+            onTimerServiceCallback = callback
+        }
+
+    }
+
+    override fun onCreate() {
+        TimerScreenViewModel.addListener(this)
+    }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         serviceId = startId
@@ -29,7 +40,6 @@ class TimerService : Service() {
         )
         try {
             ServiceCompat.startForeground(this, serviceId, notification, serviceType)
-            continueTimer()
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -38,9 +48,6 @@ class TimerService : Service() {
 
     override fun onBind(intent: Intent?): IBinder? = null
 
-    fun addListener(callback: OnTimerServiceCallback) {
-        onTimerServiceCallback = callback
-    }
 
     private fun continueTimer() {
         TimerUtils.getInstance(
@@ -76,5 +83,9 @@ class TimerService : Service() {
         ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE)
         Toast.makeText(this, "ServiceS topped", Toast.LENGTH_SHORT).show()
     }
+
+    override fun startTimer() = continueTimer()
+
+    override fun stopTimer() = TimerUtils.stopTimer()
 
 }
