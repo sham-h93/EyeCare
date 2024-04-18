@@ -76,7 +76,7 @@ fun TimerScreen(
                     modifier = Modifier
                         .size(32.dp)
                         .offset(y = -64.dp),
-                    painter = painterResource(id = R.drawable.all_visible),
+                    painter = if (state.isBreak) painterResource(id = R.drawable.all_invisible) else painterResource(id = R.drawable.all_visible) ,
                     contentDescription = null
                 )
                 Text(
@@ -98,7 +98,7 @@ fun TimerScreen(
                 modifier = Modifier.fillMaxWidth(.6f),
                 shape = MaterialTheme.shapes.large,
                 colors = ButtonColors(
-                    containerColor = when(state.isBreak) {
+                    containerColor = when(state.isStarted) {
                         true -> MaterialTheme.colorScheme.error
                         false -> MaterialTheme.colorScheme.primary
                     },
@@ -116,7 +116,7 @@ fun TimerScreen(
                 Text(
                     modifier = Modifier.padding(8.dp),
                     fontSize = 24.sp,
-                    text = when (state.isBreak) {
+                    text = when (state.isStarted) {
                         true -> "STOP"
                         false -> "START"
                     }
