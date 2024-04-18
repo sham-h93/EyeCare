@@ -29,4 +29,6 @@ object TimerUtils {
         return timer
     }
 
+    fun stopTimer() = timer.cancel()
+
 }
