@@ -16,9 +16,6 @@ class TimerService : Service(), OnServiceCallback {
     private val serviceType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
         ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE else 0
 
-    private val CONTINUE_TIMER_MILLISECONDS = 40_000L
-    private val BREAK_TIMER_MILLISECODS = 20_000L
-
     companion object {
 
         private var onTimerServiceCallback: OnTimerServiceCallback? = null
@@ -50,33 +47,27 @@ class TimerService : Service(), OnServiceCallback {
 
 
     private fun continueTimer() {
-        TimerUtils.getInstance(
-            millisInFuture = CONTINUE_TIMER_MILLISECONDS,
+        TimerUtils.continueTimer(
             onTick = { tick ->
                 onTimerServiceCallback?.let {
                     it.onBreakTimer(false)
                     it.onTick(tick)
                 }
             },
-            onFinish = {
-                breakTimer()
-            }
-        ).start()
+            onFinish = { breakTimer() }
+        )
     }
 
     private fun breakTimer() {
-        TimerUtils.getInstance(
-            millisInFuture = BREAK_TIMER_MILLISECODS,
+        TimerUtils.breakTimer(
             onTick = { tick ->
                 onTimerServiceCallback?.let {
                     it.onBreakTimer(true)
                     it.onTick(tick)
                 }
             },
-            onFinish = {
-                continueTimer()
-            }
-        ).start()
+            onFinish = { continueTimer() }
+        )
     }
 
     override fun onDestroy() {
@@ -86,6 +77,6 @@ class TimerService : Service(), OnServiceCallback {
 
     override fun startTimer() = continueTimer()
 
-    override fun stopTimer() = TimerUtils.stopTimer()
+    override fun stopTimer() = TimerUtils.cancelTimer()
 
 }

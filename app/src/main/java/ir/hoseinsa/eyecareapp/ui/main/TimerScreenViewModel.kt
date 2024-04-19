@@ -3,6 +3,7 @@ package ir.hoseinsa.eyecareapp.ui.main
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -52,6 +53,7 @@ class TimerScreenViewModel: ViewModel() {
     private fun subscribeToTimerServiceCallBack() {
         onTimerServiceCallback = object : OnTimerServiceCallback {
             override fun onBreakTimer(isBreak: Boolean) {
+                Log.d("subscribeToTimerServiceCallBack", "onBreakTimer: $isBreak")
                 state = state.copy(
                     isStarted = true,
                     isBreak = isBreak
