@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "ir.hoseinsa.eyecareapp"
+    namespace = "example.hotaku.eyecareapp"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "ir.hoseinsa.eyecareapp"
+        applicationId = "example.hotaku.eyecareapp"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
