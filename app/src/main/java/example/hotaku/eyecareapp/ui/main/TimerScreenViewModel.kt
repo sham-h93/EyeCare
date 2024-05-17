@@ -8,15 +8,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import example.hotaku.eyecareapp.utils.OnServiceCallback
-import example.hotaku.eyecareapp.utils.OnTimerServiceCallback
-import example.hotaku.eyecareapp.utils.TimeUtils.toTimeFormat
-import example.hotaku.eyecareapp.utils.TimerService
+import example.hotaku.timer.service.OnServiceCallback
+import example.hotaku.timer.service.OnTimerViewModelCallback
+import example.hotaku.timer.service.TimerService
+import example.hotaku.timer.utils.TimeUtils.toTimeFormat
 
 class TimerScreenViewModel: ViewModel() {
 
     private lateinit var serviceIntent: Intent
-    private var onTimerServiceCallback: OnTimerServiceCallback? = null
+    private var onTimerViewModelCallback: OnTimerViewModelCallback? = null
 
     companion object {
 
@@ -45,13 +45,13 @@ class TimerScreenViewModel: ViewModel() {
             context.startForegroundService(serviceIntent)
         } else  context.startService(serviceIntent)
         subscribeToTimerServiceCallBack()
-        onTimerServiceCallback?.let {
+        onTimerViewModelCallback?.let {
             TimerService.addListener(it)
         }
     }
 
     private fun subscribeToTimerServiceCallBack() {
-        onTimerServiceCallback = object : OnTimerServiceCallback {
+        onTimerViewModelCallback = object : OnTimerViewModelCallback {
             override fun onBreakTimer(isBreak: Boolean) {
                 Log.d("subscribeToTimerServiceCallBack", "onBreakTimer: $isBreak")
                 state = state.copy(

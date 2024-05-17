@@ -1,8 +1,9 @@
-package example.hotaku.eyecareapp.utils
+package example.hotaku.timer.utils
 
 import android.os.CountDownTimer
 import android.util.Log
-import example.hotaku.eyecareapp.utils.TimeUtils.toTimeFormat
+import example.hotaku.timer.utils.TimeUtils.toTimeFormat
+import example.hotaku.timer.service.TimerService
 
 object TimerUtils {
 

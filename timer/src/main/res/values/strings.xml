@@ -1,0 +1,8 @@
+<resources>
+    <string name="service_notification_start_timer">Start</string>
+    <string name="service_notification_stop_timer">Stop</string>
+    <string name="service_notification_stop_service">Close</string>
+    <string name="service_notification_you_can_start_timer">You can start timer now</string>
+    <string name="service_notification_service_ready">Ready!</string>
+    <string name="service_notification_service_timer_is_running">Timer is Running</string>
+</resources>

@@ -1,4 +1,4 @@
-package example.hotaku.eyecareapp.utils
+package example.hotaku.timer.service
 
 import android.app.NotificationManager
 import android.app.Service
@@ -9,9 +9,10 @@ import android.os.Build
 import android.os.IBinder
 import android.widget.Toast
 import androidx.core.app.ServiceCompat
-import example.hotaku.eyecareapp.R
-import example.hotaku.eyecareapp.ui.main.TimerScreenViewModel
-import example.hotaku.eyecareapp.utils.TimeUtils.toTimeFormat
+import example.hotaku.timer.R
+import example.hotaku.timer.notification.TimerNotificationManager
+import example.hotaku.timer.utils.TimeUtils.toTimeFormat
+import example.hotaku.timer.utils.TimerUtils
 
 class TimerService : Service(), OnServiceCallback {
 
@@ -23,15 +24,15 @@ class TimerService : Service(), OnServiceCallback {
 
     companion object {
 
-        private var onTimerServiceCallback: OnTimerServiceCallback? = null
-        fun addListener(callback: OnTimerServiceCallback) {
-            onTimerServiceCallback = callback
+        private var onTimerViewModelCallback: OnTimerViewModelCallback? = null
+        fun addListener(callback: OnTimerViewModelCallback) {
+            onTimerViewModelCallback = callback
         }
 
     }
 
     override fun onCreate() {
-        TimerScreenViewModel.addListener(this)
+//        TimerScreenViewModel.addListener(this)
         timerNotificationManager = TimerNotificationManager(this)
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     }
@@ -66,7 +67,7 @@ class TimerService : Service(), OnServiceCallback {
                     isRun = true
                 )
                 notificationManager.notify(TimerNotificationManager.NOTIFICATION_REQUEST_CODE, notification)
-                onTimerServiceCallback?.let {
+                onTimerViewModelCallback?.let {
                     it.onBreakTimer(false)
                     it.onTick(tick)
                 }
@@ -85,7 +86,7 @@ class TimerService : Service(), OnServiceCallback {
                     isRun = true
                 )
                 notificationManager.notify(TimerNotificationManager.NOTIFICATION_REQUEST_CODE, notification)
-                onTimerServiceCallback?.let {
+                onTimerViewModelCallback?.let {
                     it.onBreakTimer(true)
                     it.onTick(tick)
                 }

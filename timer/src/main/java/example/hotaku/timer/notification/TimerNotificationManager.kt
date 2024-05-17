@@ -1,4 +1,4 @@
-package example.hotaku.eyecareapp.utils
+package example.hotaku.timer.notification
 
 import android.annotation.SuppressLint
 import android.app.Notification
@@ -11,7 +11,8 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
 import androidx.core.app.NotificationCompat
-import example.hotaku.eyecareapp.R
+import example.hotaku.timer.R
+import example.hotaku.timer.service.TimerService
 
 @SuppressLint("UnspecifiedRegisterReceiverFlag")
 class TimerNotificationManager(private val service: TimerService): BroadcastReceiver() {

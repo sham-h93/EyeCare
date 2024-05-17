@@ -1,4 +1,4 @@
-package example.hotaku.eyecareapp.utils
+package example.hotaku.timer.service
 
 interface OnServiceCallback {
 
