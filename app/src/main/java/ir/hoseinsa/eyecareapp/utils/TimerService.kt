@@ -8,13 +8,13 @@ import android.os.IBinder
 import android.widget.Toast
 import androidx.core.app.ServiceCompat
 import ir.hoseinsa.eyecareapp.ui.main.TimerScreenViewModel
-import ir.hoseinsa.eyecareapp.utils.NotificationUtils.notificationBuilder
 
 class TimerService : Service(), OnServiceCallback {
 
     private var serviceId: Int = 0
     private val serviceType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
         ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE else 0
+    private lateinit var timerNotificationManager: TimerNotificationManager
 
     companion object {
 
@@ -27,11 +27,13 @@ class TimerService : Service(), OnServiceCallback {
 
     override fun onCreate() {
         TimerScreenViewModel.addListener(this)
+        timerNotificationManager = TimerNotificationManager(this)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         serviceId = startId
-        val notification = this.notificationBuilder(
+        val notification = timerNotificationManager.createTimerNotification(
+            context = this,
             title = "title",
             content = "title"
         )
