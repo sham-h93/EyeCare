@@ -14,7 +14,7 @@ import androidx.core.app.NotificationCompat
 import ir.hoseinsa.eyecareapp.R
 
 @SuppressLint("UnspecifiedRegisterReceiverFlag")
-class TimerNotificationManager(service: TimerService): BroadcastReceiver() {
+class TimerNotificationManager(private val service: TimerService): BroadcastReceiver() {
 
     private var startTimerIntent: PendingIntent? = null
     private var stopTimerIntent: PendingIntent? = null
@@ -22,7 +22,16 @@ class TimerNotificationManager(service: TimerService): BroadcastReceiver() {
 
 
     override fun onReceive(context: Context?, intent: Intent?) {
-
+        intent?.let {
+            when(intent.action) {
+                ACTION_START_TIMER -> service.startTimer()
+                ACTION_STOP_TIMER -> service.stopTimer()
+                ACTION_STOP_SERVICE -> {
+                    service.stopSelf()
+                    service.unregisterReceiver(this)
+                }
+            }
+        }
     }
 
 
@@ -63,14 +72,28 @@ class TimerNotificationManager(service: TimerService): BroadcastReceiver() {
     fun createTimerNotification(
         context: Context,
         title: String,
-        content: String
+        content: String,
+        isRun: Boolean
     ): Notification {
+
+        var smallIcon = R.drawable.all_visible
+        var actionIcon = R.drawable.all_play
+        var actionText = context.getString(R.string.service_notification_start_timer)
+        var actionIntent = startTimerIntent
+        
+        if(isRun) { 
+            actionIcon = R.drawable.all_pause
+            actionText = context.getString(R.string.service_notification_stop_timer)
+            actionIntent = stopTimerIntent
+        } else {
+            smallIcon = R.drawable.all_invisible
+        }
+
         createNotificationChannel(context)
         return NotificationCompat.Builder(context, CHANNEL_ID)
-            .addAction(R.drawable.all_play, "Start", startTimerIntent)
-            .addAction(R.drawable.all_pause, "Pause", stopTimerIntent)
-            .addAction(R.drawable.all_close, "Stop", stopServiceIntent)
-            .setSmallIcon(R.drawable.all_visible)
+            .addAction(actionIcon, actionText, actionIntent)
+            .addAction(R.drawable.all_close, context.getString(R.string.service_notification_stop_service), stopServiceIntent)
+            .setSmallIcon(smallIcon)
             .setContentTitle(title)
             .setContentText(content)
             .build()
@@ -78,7 +101,7 @@ class TimerNotificationManager(service: TimerService): BroadcastReceiver() {
 
     private fun createNotificationChannel(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val importance = NotificationManager.IMPORTANCE_MAX
+            val importance = NotificationManager.IMPORTANCE_HIGH
             val mChannel = NotificationChannel(CHANNEL_ID, CHANNEL_NAME, importance)
             val notificationManager =
                 context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

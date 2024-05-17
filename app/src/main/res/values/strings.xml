@@ -3,4 +3,10 @@
     <string name="main_screen_what_is_20_20_20">What is 20-20-20 rule and how does it work?</string>
     <string name="main_screen_rule_description">The 20-20-20 rule is a technique recommended by eye care professionals to help prevent and alleviate digital eye strain. It works as follows:</string>
     <string name="main_screen_rule_explain">Every 20 minutes, take a 20-second break to look at something 20 feet (6 meters) away.</string>
+    <string name="service_notification_start_timer">Start</string>
+    <string name="service_notification_stop_timer">Stop</string>
+    <string name="service_notification_stop_service">Close</string>
+    <string name="service_notification_you_can_start_timer">You can start timer now</string>
+    <string name="service_notification_service_ready">Ready!</string>
+    <string name="service_notification_service_timer_is_running">Timer is Running</string>
 </resources>

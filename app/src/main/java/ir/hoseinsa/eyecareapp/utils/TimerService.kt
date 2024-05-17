@@ -1,13 +1,17 @@
 package ir.hoseinsa.eyecareapp.utils
 
+import android.app.NotificationManager
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
 import android.os.Build
 import android.os.IBinder
 import android.widget.Toast
 import androidx.core.app.ServiceCompat
+import ir.hoseinsa.eyecareapp.R
 import ir.hoseinsa.eyecareapp.ui.main.TimerScreenViewModel
+import ir.hoseinsa.eyecareapp.utils.TimeUtils.toTimeFormat
 
 class TimerService : Service(), OnServiceCallback {
 
@@ -15,6 +19,7 @@ class TimerService : Service(), OnServiceCallback {
     private val serviceType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
         ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE else 0
     private lateinit var timerNotificationManager: TimerNotificationManager
+    private lateinit var notificationManager: NotificationManager
 
     companion object {
 
@@ -28,17 +33,19 @@ class TimerService : Service(), OnServiceCallback {
     override fun onCreate() {
         TimerScreenViewModel.addListener(this)
         timerNotificationManager = TimerNotificationManager(this)
+        notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         serviceId = startId
         val notification = timerNotificationManager.createTimerNotification(
             context = this,
-            title = "title",
-            content = "title"
+            title = getString(R.string.service_notification_service_ready),
+            content = getString(R.string.service_notification_you_can_start_timer),
+            isRun = false
         )
         try {
-            ServiceCompat.startForeground(this, serviceId, notification, serviceType)
+            ServiceCompat.startForeground(this, TimerNotificationManager.NOTIFICATION_REQUEST_CODE, notification, serviceType)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -49,8 +56,16 @@ class TimerService : Service(), OnServiceCallback {
 
 
     private fun continueTimer() {
+
         TimerUtils.continueTimer(
             onTick = { tick ->
+                val notification = timerNotificationManager.createTimerNotification(
+                    context = this,
+                    title = getString(R.string.service_notification_service_timer_is_running),
+                    content = tick.toTimeFormat(),
+                    isRun = true
+                )
+                notificationManager.notify(TimerNotificationManager.NOTIFICATION_REQUEST_CODE, notification)
                 onTimerServiceCallback?.let {
                     it.onBreakTimer(false)
                     it.onTick(tick)
@@ -63,6 +78,13 @@ class TimerService : Service(), OnServiceCallback {
     private fun breakTimer() {
         TimerUtils.breakTimer(
             onTick = { tick ->
+                val notification = timerNotificationManager.createTimerNotification(
+                    context = this,
+                    title = getString(R.string.service_notification_service_timer_is_running),
+                    content = tick.toTimeFormat(),
+                    isRun = true
+                )
+                notificationManager.notify(TimerNotificationManager.NOTIFICATION_REQUEST_CODE, notification)
                 onTimerServiceCallback?.let {
                     it.onBreakTimer(true)
                     it.onTick(tick)
@@ -79,6 +101,15 @@ class TimerService : Service(), OnServiceCallback {
 
     override fun startTimer() = continueTimer()
 
-    override fun stopTimer() = TimerUtils.cancelTimer()
+    override fun stopTimer() {
+        TimerUtils.cancelTimer()
+        val notification = timerNotificationManager.createTimerNotification(
+            context = this,
+            title = getString(R.string.service_notification_service_ready),
+            content = getString(R.string.service_notification_you_can_start_timer),
+            isRun = false
+        )
+        notificationManager.notify(TimerNotificationManager.NOTIFICATION_REQUEST_CODE, notification)
+    }
 
 }
