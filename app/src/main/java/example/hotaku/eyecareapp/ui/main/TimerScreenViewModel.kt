@@ -11,22 +11,15 @@ import androidx.lifecycle.ViewModel
 import example.hotaku.timer.service.OnServiceCallback
 import example.hotaku.timer.service.OnTimerViewModelCallback
 import example.hotaku.timer.service.TimerService
+import example.hotaku.timer.use_case.TimerServiceUseCase
 import example.hotaku.timer.utils.TimeUtils.toTimeFormat
 
-class TimerScreenViewModel: ViewModel() {
+class TimerScreenViewModel(
+    private val timerServiceUseCase: TimerServiceUseCase = TimerServiceUseCase()
+): ViewModel() {
 
     private lateinit var serviceIntent: Intent
     private var onTimerViewModelCallback: OnTimerViewModelCallback? = null
-
-    companion object {
-
-        private var onServiceCallback: OnServiceCallback? = null
-
-        fun addListener(callBack: OnServiceCallback) {
-            onServiceCallback = callBack
-        }
-
-    }
 
     var state by mutableStateOf(TimerScreenState())
         private set
@@ -70,12 +63,11 @@ class TimerScreenViewModel: ViewModel() {
     }
 
     private fun startTimer() {
-        onServiceCallback?.startTimer()
+        timerServiceUseCase.startTimer()
     }
 
     private fun stopTimer() {
-        onServiceCallback?.stopTimer()
-//        context.stopService(serviceIntent)
+        timerServiceUseCase.stopTimer()
         state = TimerScreenState()
     }
 

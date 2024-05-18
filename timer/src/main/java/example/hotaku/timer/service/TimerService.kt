@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.core.app.ServiceCompat
 import example.hotaku.timer.R
 import example.hotaku.timer.notification.TimerNotificationManager
+import example.hotaku.timer.use_case.TimerServiceUseCase
 import example.hotaku.timer.utils.TimeUtils.toTimeFormat
 import example.hotaku.timer.utils.TimerUtils
 
@@ -32,7 +33,7 @@ class TimerService : Service(), OnServiceCallback {
     }
 
     override fun onCreate() {
-//        TimerScreenViewModel.addListener(this)
+        TimerServiceUseCase.addListener(this)
         timerNotificationManager = TimerNotificationManager(this)
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     }
