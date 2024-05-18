@@ -98,7 +98,7 @@ fun TimerScreen(
                 modifier = Modifier.fillMaxWidth(.6f),
                 shape = MaterialTheme.shapes.large,
                 colors = ButtonColors(
-                    containerColor = when(state.isStarted) {
+                    containerColor = when(state.isTimerStarted) {
                         true -> MaterialTheme.colorScheme.error
                         false -> MaterialTheme.colorScheme.primary
                     },
@@ -107,7 +107,7 @@ fun TimerScreen(
                     disabledContentColor = Color.Unspecified,
                 ),
                 onClick = {
-                    when(state.isStarted) {
+                    when(state.isTimerStarted) {
                         true -> viewModel.onEvent(TimerScreenEvent.StopTimer(context))
                         false -> viewModel.onEvent(TimerScreenEvent.StartTimer(context))
                     }
@@ -116,7 +116,7 @@ fun TimerScreen(
                 Text(
                     modifier = Modifier.padding(8.dp),
                     fontSize = 24.sp,
-                    text = when (state.isStarted) {
+                    text = when (state.isTimerStarted) {
                         true -> "STOP"
                         false -> "START"
                     }

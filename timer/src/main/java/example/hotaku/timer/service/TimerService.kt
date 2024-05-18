@@ -98,6 +98,7 @@ class TimerService : Service(), OnServiceCallback {
 
     override fun onDestroy() {
         ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE)
+        onTimerViewModelCallback?.onStop(isKilled = true)
         Toast.makeText(this, "ServiceS topped", Toast.LENGTH_SHORT).show()
     }
 
@@ -112,7 +113,7 @@ class TimerService : Service(), OnServiceCallback {
             isRun = false
         )
         notificationManager.notify(TimerNotificationManager.NOTIFICATION_REQUEST_CODE, notification)
-        onTimerViewModelCallback?.onStop()
+        onTimerViewModelCallback?.onStop(isKilled = false)
     }
 
 }

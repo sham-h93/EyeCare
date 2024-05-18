@@ -28,8 +28,11 @@ class TimerNotificationManager(private val service: TimerService): BroadcastRece
                 ACTION_START_TIMER -> service.startTimer()
                 ACTION_STOP_TIMER -> service.stopTimer()
                 ACTION_STOP_SERVICE -> {
-                    service.stopSelf()
-                    service.unregisterReceiver(this)
+                    service.run {
+                        stopTimer()
+                        stopSelf()
+                        unregisterReceiver(this@TimerNotificationManager)
+                    }
                 }
             }
         }

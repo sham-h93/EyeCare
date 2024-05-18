@@ -8,7 +8,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import example.hotaku.timer.service.OnServiceCallback
 import example.hotaku.timer.service.OnTimerViewModelCallback
 import example.hotaku.timer.service.TimerService
 import example.hotaku.timer.use_case.TimerServiceUseCase
@@ -27,7 +26,7 @@ class TimerScreenViewModel(
     fun onEvent(event: TimerScreenEvent) {
         when(event) {
             is TimerScreenEvent.StartService -> startService(event.context)
-            is TimerScreenEvent.StartTimer -> startTimer()
+            is TimerScreenEvent.StartTimer -> startTimer(event.context)
             is TimerScreenEvent.StopTimer -> stopTimer()
         }
     }
@@ -48,7 +47,7 @@ class TimerScreenViewModel(
             override fun onBreakTimer(isBreak: Boolean) {
                 Log.d("subscribeToTimerServiceCallBack", "onBreakTimer: $isBreak")
                 state = state.copy(
-                    isStarted = true,
+                    isTimerStarted = true,
                     isBreak = isBreak
                 )
             }
@@ -59,13 +58,21 @@ class TimerScreenViewModel(
                 )
             }
 
-            override fun onStop() {
-                state = TimerScreenState()
+            override fun onStop(isKilled: Boolean) {
+                state = state.copy(
+                    isServiceStarted = !isKilled,
+                    isTimerStarted = false,
+                    isBreak = false,
+                    time = "00:00",
+                )
             }
         }
     }
 
-    private fun startTimer() {
+    private fun startTimer(context: Context) {
+        state.isTimerStarted.not().let {
+            startService(context = context)
+        }
         timerServiceUseCase.startTimer()
     }
 
