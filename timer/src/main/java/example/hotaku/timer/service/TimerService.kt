@@ -112,6 +112,7 @@ class TimerService : Service(), OnServiceCallback {
             isRun = false
         )
         notificationManager.notify(TimerNotificationManager.NOTIFICATION_REQUEST_CODE, notification)
+        onTimerViewModelCallback?.onStop()
     }
 
 }

@@ -6,4 +6,6 @@ interface OnTimerViewModelCallback {
 
     fun onTick(tick: Long)
 
+    fun onStop()
+
 }

@@ -59,6 +59,9 @@ class TimerScreenViewModel(
                 )
             }
 
+            override fun onStop() {
+                state = TimerScreenState()
+            }
         }
     }
 
@@ -68,7 +71,6 @@ class TimerScreenViewModel(
 
     private fun stopTimer() {
         timerServiceUseCase.stopTimer()
-        state = TimerScreenState()
     }
 
 
