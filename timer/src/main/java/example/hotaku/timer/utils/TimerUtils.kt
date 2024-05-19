@@ -9,8 +9,8 @@ object TimerUtils {
 
     private const val MILLIS_INTERVAL = 1000L
     private var timer: CountDownTimer? = null
-    private val CONTINUE_TIMER_MILLISECONDS = 10_000L
-    private val BREAK_TIMER_MILLISECODS = 5_000L
+    private val CONTINUE_TIMER_MILLISECONDS = 1_200_000L
+    private val BREAK_TIMER_MILLISECODS = 20_000L
 
     private fun getInstance(
         millisInFuture: Long,
