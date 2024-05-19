@@ -30,7 +30,7 @@ class TimerNotificationManager(private val service: TimerService): BroadcastRece
                 ACTION_STOP_SERVICE -> {
                     service.run {
                         stopTimer()
-                        stopSelf()
+                        killService()
                         unregisterReceiver(this@TimerNotificationManager)
                     }
                 }
@@ -45,21 +45,21 @@ class TimerNotificationManager(private val service: TimerService): BroadcastRece
             service,
             NOTIFICATION_REQUEST_CODE,
             Intent(ACTION_START_TIMER).setPackage(service.packageName),
-            PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
         )
 
         stopTimerIntent = PendingIntent.getBroadcast(
             service,
             NOTIFICATION_REQUEST_CODE,
             Intent(ACTION_STOP_TIMER).setPackage(service.packageName),
-            PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
         )
 
         stopServiceIntent = PendingIntent.getBroadcast(
             service,
             NOTIFICATION_REQUEST_CODE,
             Intent(ACTION_STOP_SERVICE).setPackage(service.packageName),
-            PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
         )
 
         val filters = IntentFilter().apply {
@@ -100,6 +100,7 @@ class TimerNotificationManager(private val service: TimerService): BroadcastRece
             .setSmallIcon(smallIcon)
             .setContentTitle(title)
             .setContentText(content)
+            .setOnlyAlertOnce(true)
             .build()
     }
 
