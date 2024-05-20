@@ -82,6 +82,4 @@ class TimerScreenViewModel(
     private fun stopTimer() {
         timerServiceUseCase.stopTimer()
     }
-
-
 }
