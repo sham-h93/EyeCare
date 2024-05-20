@@ -31,9 +31,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import example.hotaku.eyecareapp.R
 import example.hotaku.eyecareapp.ui.components.EyeCareTopBar
 import example.hotaku.eyecareapp.ui.theme.EyeCareAppTheme
-import example.hotaku.eyecareapp.R
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -44,6 +44,7 @@ fun TimerScreen(
 
     val state = viewModel.state
     val context = LocalContext.current
+    val stateColor = if (state.isBreak) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
 
     LaunchedEffect(key1 = true) {
         viewModel.onEvent(TimerScreenEvent.StartService(context))
@@ -69,15 +70,17 @@ fun TimerScreen(
             ) {
                 CircularProgressIndicator(
                     modifier = Modifier.size(260.dp),
+                    color = stateColor,
                     trackColor = Color.Gray.copy(alpha = .2f),
-                    progress = { 0.7f }
+                    progress = { state.progress }
                 )
                 Icon(
                     modifier = Modifier
                         .size(32.dp)
                         .offset(y = -64.dp),
                     painter = if (state.isBreak) painterResource(id = R.drawable.all_invisible) else painterResource(id = R.drawable.all_visible) ,
-                    contentDescription = null
+                    contentDescription = null,
+                    tint = stateColor
                 )
                 Text(
                     fontSize = 68.sp,
@@ -87,6 +90,7 @@ fun TimerScreen(
                 Text(
                     modifier = Modifier.offset(y = 64.dp),
                     fontSize = 24.sp,
+                    color = stateColor,
                     text = when (state.isBreak) {
                         true -> "BREAK"
                         false -> "CONTINUE"

@@ -3,7 +3,6 @@ package example.hotaku.eyecareapp.ui.main
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -12,6 +11,8 @@ import example.hotaku.timer.service.OnTimerViewModelCallback
 import example.hotaku.timer.service.TimerService
 import example.hotaku.timer.use_case.TimerServiceUseCase
 import example.hotaku.timer.utils.TimeUtils.toTimeFormat
+import example.hotaku.timer.utils.TimerUtils.BREAK_TIMER_MILLISECODS
+import example.hotaku.timer.utils.TimerUtils.CONTINUE_TIMER_MILLISECONDS
 
 class TimerScreenViewModel(
     private val timerServiceUseCase: TimerServiceUseCase = TimerServiceUseCase()
@@ -45,7 +46,6 @@ class TimerScreenViewModel(
     private fun subscribeToTimerServiceCallBack() {
         onTimerViewModelCallback = object : OnTimerViewModelCallback {
             override fun onBreakTimer(isBreak: Boolean) {
-                Log.d("subscribeToTimerServiceCallBack", "onBreakTimer: $isBreak")
                 state = state.copy(
                     isTimerStarted = true,
                     isBreak = isBreak
@@ -53,7 +53,9 @@ class TimerScreenViewModel(
             }
 
             override fun onTick(tick: Long) {
+                val value = tick.toFloat() / if(state.isBreak) BREAK_TIMER_MILLISECODS else CONTINUE_TIMER_MILLISECONDS
                 state = state.copy(
+                    progress = 1 - value,
                     time = tick.toTimeFormat()
                 )
             }
@@ -63,6 +65,7 @@ class TimerScreenViewModel(
                     isServiceStarted = !isKilled,
                     isTimerStarted = false,
                     isBreak = false,
+                    progress = .0f,
                     time = "00:00",
                 )
             }
