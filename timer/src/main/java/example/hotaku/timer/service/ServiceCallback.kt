@@ -1,6 +1,6 @@
 package example.hotaku.timer.service
 
-interface OnServiceCallback {
+interface ServiceCallback {
 
     fun startTimer()
 

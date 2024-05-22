@@ -12,12 +12,12 @@ import androidx.core.app.ServiceCompat
 import dagger.hilt.android.AndroidEntryPoint
 import example.hotaku.timer.R
 import example.hotaku.timer.notification.TimerNotificationManager
-import example.hotaku.timer.use_case.TimerServiceUseCase
+import example.hotaku.timer.use_case.TimerServiceRepository
 import example.hotaku.timer.utils.TimeUtils.toTimeFormat
 import example.hotaku.timer.utils.TimerUtils
 
 @AndroidEntryPoint
-class TimerService : Service(), OnServiceCallback {
+class TimerService : Service(), ServiceCallback {
 
     private var serviceId: Int = 0
     private val serviceType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
@@ -27,15 +27,15 @@ class TimerService : Service(), OnServiceCallback {
 
     companion object {
 
-        private var onTimerViewModelCallback: OnTimerViewModelCallback? = null
-        fun addListener(callback: OnTimerViewModelCallback) {
-            onTimerViewModelCallback = callback
+        private var serviceTimerCallback: ServiceTimerCallback? = null
+        fun addListener(callback: ServiceTimerCallback) {
+            serviceTimerCallback = callback
         }
 
     }
 
     override fun onCreate() {
-        TimerServiceUseCase.addListener(this)
+        TimerServiceRepository.addListener(this)
         timerNotificationManager = TimerNotificationManager(this)
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     }
@@ -70,7 +70,7 @@ class TimerService : Service(), OnServiceCallback {
                     isRun = true
                 )
                 notificationManager.notify(TimerNotificationManager.NOTIFICATION_REQUEST_CODE, notification)
-                onTimerViewModelCallback?.let {
+                serviceTimerCallback?.let {
                     it.onBreakTimer(false)
                     it.onTick(tick)
                 }
@@ -89,7 +89,7 @@ class TimerService : Service(), OnServiceCallback {
                     isRun = true
                 )
                 notificationManager.notify(TimerNotificationManager.NOTIFICATION_REQUEST_CODE, notification)
-                onTimerViewModelCallback?.let {
+                serviceTimerCallback?.let {
                     it.onBreakTimer(true)
                     it.onTick(tick)
                 }
@@ -100,7 +100,7 @@ class TimerService : Service(), OnServiceCallback {
 
     override fun onDestroy() {
         ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE)
-        onTimerViewModelCallback?.onStop(isKilled = true)
+        serviceTimerCallback?.onStop(isKilled = true)
         Toast.makeText(this, "Service Stopped", Toast.LENGTH_SHORT).show()
     }
 
@@ -115,12 +115,12 @@ class TimerService : Service(), OnServiceCallback {
             isRun = false
         )
         notificationManager.notify(TimerNotificationManager.NOTIFICATION_REQUEST_CODE, notification)
-        onTimerViewModelCallback?.onStop(isKilled = false)
+        serviceTimerCallback?.onStop(isKilled = false)
     }
 
     fun killService() {
         stopSelf()
-        onTimerViewModelCallback?.onStop(isKilled = true)
+        serviceTimerCallback?.onStop(isKilled = true)
     }
 
 }

@@ -1,6 +1,6 @@
 package example.hotaku.timer.service
 
-interface OnTimerViewModelCallback {
+interface ServiceTimerCallback {
 
     fun onBreakTimer(isBreak: Boolean)
 

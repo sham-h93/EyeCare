@@ -8,9 +8,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import example.hotaku.timer.service.OnTimerViewModelCallback
+import example.hotaku.timer.service.ServiceTimerCallback
 import example.hotaku.timer.service.TimerService
-import example.hotaku.timer.use_case.TimerServiceUseCase
+import example.hotaku.timer.use_case.TimerServiceRepository
 import example.hotaku.timer.utils.TimeUtils.toTimeFormat
 import example.hotaku.timer.utils.TimerUtils.BREAK_TIMER_MILLISECODS
 import example.hotaku.timer.utils.TimerUtils.CONTINUE_TIMER_MILLISECONDS
@@ -18,11 +18,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TimerScreenViewModel @Inject constructor(
-    private val timerServiceUseCase: TimerServiceUseCase
+    private val timerServiceRepository: TimerServiceRepository
 ): ViewModel() {
 
     private lateinit var serviceIntent: Intent
-    private var onTimerViewModelCallback: OnTimerViewModelCallback? = null
+    private var serviceTimerCallback: ServiceTimerCallback? = null
 
     var state by mutableStateOf(TimerScreenState())
         private set
@@ -41,13 +41,13 @@ class TimerScreenViewModel @Inject constructor(
             context.startForegroundService(serviceIntent)
         } else  context.startService(serviceIntent)
         subscribeToTimerServiceCallBack()
-        onTimerViewModelCallback?.let {
+        serviceTimerCallback?.let {
             TimerService.addListener(it)
         }
     }
 
     private fun subscribeToTimerServiceCallBack() {
-        onTimerViewModelCallback = object : OnTimerViewModelCallback {
+        serviceTimerCallback = object : ServiceTimerCallback {
             override fun onBreakTimer(isBreak: Boolean) {
                 state = state.copy(
                     isTimerStarted = true,
@@ -79,10 +79,10 @@ class TimerScreenViewModel @Inject constructor(
         state.isTimerStarted.not().let {
             startService(context = context)
         }
-        timerServiceUseCase.startTimer()
+        timerServiceRepository.startTimer()
     }
 
     private fun stopTimer() {
-        timerServiceUseCase.stopTimer()
+        timerServiceRepository.stopTimer()
     }
 }

@@ -4,7 +4,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import example.hotaku.timer.use_case.TimerServiceUseCase
+import example.hotaku.timer.use_case.TimerServiceRepository
 import javax.inject.Singleton
 
 @Module
@@ -13,6 +13,6 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideTimerServiceUseCase(): TimerServiceUseCase = TimerServiceUseCase()
+    fun provideTimerServiceUseCase(): TimerServiceRepository = TimerServiceRepository()
 
 }
