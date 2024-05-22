@@ -1,9 +1,18 @@
 package example.hotaku.eyecareapp.di
 
-import example.hotaku.eyecareapp.ui.main.TimerScreenViewModel
-import org.koin.androidx.viewmodel.dsl.viewModel
-import org.koin.dsl.module
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import example.hotaku.timer.use_case.TimerServiceUseCase
+import javax.inject.Singleton
 
-val appModule = module {
-    viewModel { TimerScreenViewModel() }
+@Module
+@InstallIn(SingletonComponent::class)
+object AppModule {
+
+    @Provides
+    @Singleton
+    fun provideTimerServiceUseCase(): TimerServiceUseCase = TimerServiceUseCase()
+
 }

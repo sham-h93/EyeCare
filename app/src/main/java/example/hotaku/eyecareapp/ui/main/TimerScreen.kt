@@ -31,20 +31,21 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import example.hotaku.eyecareapp.R
 import example.hotaku.eyecareapp.ui.components.EyeCareTopBar
 import example.hotaku.eyecareapp.ui.theme.EyeCareAppTheme
-import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun TimerScreen(
     modifier: Modifier = Modifier,
-    viewModel: TimerScreenViewModel = koinViewModel()
+    viewModel: TimerScreenViewModel = hiltViewModel()
 ) {
 
     val state = viewModel.state
     val context = LocalContext.current
-    val stateColor = if (state.isBreak) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+    val stateColor =
+        if (state.isBreak) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
 
     LaunchedEffect(key1 = true) {
         viewModel.onEvent(TimerScreenEvent.StartService(context))
@@ -78,7 +79,9 @@ fun TimerScreen(
                     modifier = Modifier
                         .size(32.dp)
                         .offset(y = -64.dp),
-                    painter = if (state.isBreak) painterResource(id = R.drawable.all_invisible) else painterResource(id = R.drawable.all_visible) ,
+                    painter = if (state.isBreak) painterResource(id = R.drawable.all_invisible) else painterResource(
+                        id = R.drawable.all_visible
+                    ),
                     contentDescription = null,
                     tint = stateColor
                 )
@@ -102,7 +105,7 @@ fun TimerScreen(
                 modifier = Modifier.fillMaxWidth(.6f),
                 shape = MaterialTheme.shapes.large,
                 colors = ButtonColors(
-                    containerColor = when(state.isTimerStarted) {
+                    containerColor = when (state.isTimerStarted) {
                         true -> MaterialTheme.colorScheme.error
                         false -> MaterialTheme.colorScheme.primary
                     },
@@ -111,7 +114,7 @@ fun TimerScreen(
                     disabledContentColor = Color.Unspecified,
                 ),
                 onClick = {
-                    when(state.isTimerStarted) {
+                    when (state.isTimerStarted) {
                         true -> viewModel.onEvent(TimerScreenEvent.StopTimer(context))
                         false -> viewModel.onEvent(TimerScreenEvent.StartTimer(context))
                     }

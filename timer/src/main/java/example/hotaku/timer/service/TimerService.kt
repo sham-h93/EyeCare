@@ -9,12 +9,14 @@ import android.os.Build
 import android.os.IBinder
 import android.widget.Toast
 import androidx.core.app.ServiceCompat
+import dagger.hilt.android.AndroidEntryPoint
 import example.hotaku.timer.R
 import example.hotaku.timer.notification.TimerNotificationManager
 import example.hotaku.timer.use_case.TimerServiceUseCase
 import example.hotaku.timer.utils.TimeUtils.toTimeFormat
 import example.hotaku.timer.utils.TimerUtils
 
+@AndroidEntryPoint
 class TimerService : Service(), OnServiceCallback {
 
     private var serviceId: Int = 0

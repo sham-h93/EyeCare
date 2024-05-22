@@ -1,8 +1,9 @@
 package example.hotaku.timer.use_case
 
 import example.hotaku.timer.service.OnServiceCallback
+import javax.inject.Inject
 
-class TimerServiceUseCase {
+class TimerServiceUseCase @Inject constructor() {
 
     fun startTimer() = onServiceCallback?.startTimer()
 

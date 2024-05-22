@@ -7,15 +7,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import example.hotaku.timer.service.OnTimerViewModelCallback
 import example.hotaku.timer.service.TimerService
 import example.hotaku.timer.use_case.TimerServiceUseCase
 import example.hotaku.timer.utils.TimeUtils.toTimeFormat
 import example.hotaku.timer.utils.TimerUtils.BREAK_TIMER_MILLISECODS
 import example.hotaku.timer.utils.TimerUtils.CONTINUE_TIMER_MILLISECONDS
+import javax.inject.Inject
 
-class TimerScreenViewModel(
-    private val timerServiceUseCase: TimerServiceUseCase = TimerServiceUseCase()
+@HiltViewModel
+class TimerScreenViewModel @Inject constructor(
+    private val timerServiceUseCase: TimerServiceUseCase
 ): ViewModel() {
 
     private lateinit var serviceIntent: Intent
