@@ -1,5 +1,6 @@
 package example.hotaku.timer.service
 
+import android.app.Notification
 import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
@@ -19,7 +20,6 @@ import example.hotaku.timer.utils.TimerUtils
 @AndroidEntryPoint
 class TimerService : Service(), ServiceCallback {
 
-    private var serviceId: Int = 0
     private val serviceType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
         ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE else 0
     private lateinit var timerNotificationManager: TimerNotificationManager
@@ -41,7 +41,11 @@ class TimerService : Service(), ServiceCallback {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        serviceId = startId
+        startForegroundOwnService()
+        return START_STICKY
+    }
+
+    private fun startForegroundOwnService() {
         val notification = timerNotificationManager.createTimerNotification(
             context = this,
             title = getString(R.string.service_notification_service_ready),
@@ -49,18 +53,21 @@ class TimerService : Service(), ServiceCallback {
             isRun = false
         )
         try {
-            ServiceCompat.startForeground(this, TimerNotificationManager.NOTIFICATION_REQUEST_CODE, notification, serviceType)
+            ServiceCompat.startForeground(
+                this,
+                TimerNotificationManager.NOTIFICATION_REQUEST_CODE,
+                notification,
+                serviceType
+            )
         } catch (e: Exception) {
             e.printStackTrace()
         }
-        return START_STICKY
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
 
 
     private fun continueTimer() {
-
         TimerUtils.continueTimer(
             onTick = { tick ->
                 val notification = timerNotificationManager.createTimerNotification(
@@ -118,9 +125,6 @@ class TimerService : Service(), ServiceCallback {
         serviceTimerCallback?.onStop(isKilled = false)
     }
 
-    fun killService() {
-        stopSelf()
-        serviceTimerCallback?.onStop(isKilled = true)
-    }
+    fun killService() = stopSelf()
 
 }
