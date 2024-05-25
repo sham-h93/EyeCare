@@ -1,11 +1,11 @@
 package example.hotaku.timer.service
 
-import android.app.Notification
 import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
+import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import android.widget.Toast
@@ -13,36 +13,36 @@ import androidx.core.app.ServiceCompat
 import dagger.hilt.android.AndroidEntryPoint
 import example.hotaku.timer.R
 import example.hotaku.timer.notification.TimerNotificationManager
-import example.hotaku.timer.use_case.TimerServiceRepository
 import example.hotaku.timer.utils.TimeUtils.toTimeFormat
 import example.hotaku.timer.utils.TimerUtils
 
 @AndroidEntryPoint
-class TimerService : Service(), ServiceCallback {
+class TimerService : Service() {
+
+    private var localBinder = LocalBinder()
 
     private val serviceType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
         ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE else 0
+    private var serviceTimerCallback: ServiceTimerCallback? = null
     private lateinit var timerNotificationManager: TimerNotificationManager
     private lateinit var notificationManager: NotificationManager
 
-    companion object {
-
-        private var serviceTimerCallback: ServiceTimerCallback? = null
-        fun addListener(callback: ServiceTimerCallback) {
-            serviceTimerCallback = callback
-        }
-
+    inner class LocalBinder: Binder() {
+        fun getService() = this@TimerService
     }
 
     override fun onCreate() {
-        TimerServiceRepository.addListener(this)
-        timerNotificationManager = TimerNotificationManager(this)
-        notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    timerNotificationManager = TimerNotificationManager(this)
+    notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        startForegroundOwnService()
         return START_STICKY
+    }
+
+    override fun onBind(intent: Intent?): IBinder {
+        startForegroundOwnService()
+        return localBinder
     }
 
     private fun startForegroundOwnService() {
@@ -63,9 +63,6 @@ class TimerService : Service(), ServiceCallback {
             e.printStackTrace()
         }
     }
-
-    override fun onBind(intent: Intent?): IBinder? = null
-
 
     private fun continueTimer() {
         TimerUtils.continueTimer(
@@ -111,9 +108,9 @@ class TimerService : Service(), ServiceCallback {
         Toast.makeText(this, "Service Stopped", Toast.LENGTH_SHORT).show()
     }
 
-    override fun startTimer() = continueTimer()
+    fun startTimer() = continueTimer()
 
-    override fun stopTimer() {
+    fun stopTimer() {
         TimerUtils.cancelTimer()
         val notification = timerNotificationManager.createTimerNotification(
             context = this,
@@ -125,6 +122,11 @@ class TimerService : Service(), ServiceCallback {
         serviceTimerCallback?.onStop(isKilled = false)
     }
 
-    fun killService() = stopSelf()
+    fun killService() {
+        stopSelf()
+    }
+    fun addListener(callback: ServiceTimerCallback) {
+        serviceTimerCallback = callback
+    }
 
 }
