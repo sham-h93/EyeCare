@@ -15,25 +15,38 @@ import example.hotaku.timer.R
 import example.hotaku.timer.notification.TimerNotificationManager
 import example.hotaku.timer.utils.TimeUtils.toTimeFormat
 import example.hotaku.timer.utils.TimerUtils
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class TimerService : Service() {
+
+    private var _timeer = MutableSharedFlow<Pair<Long, Boolean>>()
+    val timeer = _timeer
 
     private var localBinder = LocalBinder()
 
     private val serviceType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
         ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE else 0
-    private var serviceTimerCallback: ServiceTimerCallback? = null
     private lateinit var timerNotificationManager: TimerNotificationManager
     private lateinit var notificationManager: NotificationManager
+    private lateinit var scope: CoroutineScope
 
-    inner class LocalBinder: Binder() {
+
+    inner class LocalBinder : Binder() {
         fun getService() = this@TimerService
     }
 
     override fun onCreate() {
-    timerNotificationManager = TimerNotificationManager(this)
-    notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        timerNotificationManager = TimerNotificationManager(this)
+        notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -73,13 +86,17 @@ class TimerService : Service() {
                     content = tick.toTimeFormat(),
                     isRun = true
                 )
-                notificationManager.notify(TimerNotificationManager.NOTIFICATION_REQUEST_CODE, notification)
-                serviceTimerCallback?.let {
-                    it.onBreakTimer(false)
-                    it.onTick(tick)
+                scope.launch {
+                    _timeer.emit(tick to false)
                 }
+                notificationManager.notify(
+                    TimerNotificationManager.NOTIFICATION_REQUEST_CODE,
+                    notification
+                )
             },
-            onFinish = { breakTimer() }
+            onFinish = {
+                breakTimer()
+            }
         )
     }
 
@@ -92,11 +109,13 @@ class TimerService : Service() {
                     content = tick.toTimeFormat(),
                     isRun = true
                 )
-                notificationManager.notify(TimerNotificationManager.NOTIFICATION_REQUEST_CODE, notification)
-                serviceTimerCallback?.let {
-                    it.onBreakTimer(true)
-                    it.onTick(tick)
+                scope.launch {
+                    _timeer.emit(tick to true)
                 }
+                notificationManager.notify(
+                    TimerNotificationManager.NOTIFICATION_REQUEST_CODE,
+                    notification
+                )
             },
             onFinish = { continueTimer() }
         )
@@ -104,13 +123,13 @@ class TimerService : Service() {
 
     override fun onDestroy() {
         ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE)
-        serviceTimerCallback?.onStop(isKilled = true)
         Toast.makeText(this, "Service Stopped", Toast.LENGTH_SHORT).show()
     }
 
     fun startTimer() = continueTimer()
 
     fun stopTimer() {
+        scope.cancel()
         TimerUtils.cancelTimer()
         val notification = timerNotificationManager.createTimerNotification(
             context = this,
@@ -119,14 +138,11 @@ class TimerService : Service() {
             isRun = false
         )
         notificationManager.notify(TimerNotificationManager.NOTIFICATION_REQUEST_CODE, notification)
-        serviceTimerCallback?.onStop(isKilled = false)
     }
 
     fun killService() {
+        scope.cancel()
         stopSelf()
-    }
-    fun addListener(callback: ServiceTimerCallback) {
-        serviceTimerCallback = callback
     }
 
 }

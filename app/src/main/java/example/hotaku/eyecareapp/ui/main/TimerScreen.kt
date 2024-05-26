@@ -19,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,11 +45,13 @@ fun TimerScreen(
 
     val state = viewModel.state
     val context = LocalContext.current
-    val stateColor =
-        if (state.isBreak) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+    val stateColor = if (state.isBreak) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
 
-    LaunchedEffect(key1 = true) {
+    DisposableEffect(key1 = true) {
         viewModel.onEvent(TimerScreenEvent.StartService(context))
+        onDispose {
+            viewModel.onEvent(TimerScreenEvent.StopService(context))
+        }
     }
 
     Scaffold(
@@ -115,7 +118,7 @@ fun TimerScreen(
                 ),
                 onClick = {
                     when (state.isTimerStarted) {
-                        true -> viewModel.onEvent(TimerScreenEvent.StopTimer(context))
+                        true -> viewModel.onEvent(TimerScreenEvent.StopTimer)
                         false -> viewModel.onEvent(TimerScreenEvent.StartTimer(context))
                     }
                 }
