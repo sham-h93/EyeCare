@@ -41,15 +41,15 @@ class TimerScreenViewModel @Inject constructor(): ViewModel() {
 
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            state = state.copy(isServiceStarted = true)
             this@TimerScreenViewModel.service = service as TimerService.LocalBinder
             timerValue  = service.getService().timeer
+            state = state.copy(isServiceStarted = true)
             consumeChannelData()
             collectTimeData()
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
-            state = state.copy(isServiceStarted = false)
+//            state = state.copy(isServiceStarted = false)
         }
     }
 
@@ -109,7 +109,7 @@ class TimerScreenViewModel @Inject constructor(): ViewModel() {
     }
 
     private fun unBindService(context: Context) {
-        if (state.isServiceStarted) context.unbindService(serviceConnection)
+        context.unbindService(serviceConnection)
     }
 
 }

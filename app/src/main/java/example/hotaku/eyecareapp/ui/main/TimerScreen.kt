@@ -36,6 +36,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import example.hotaku.eyecareapp.R
 import example.hotaku.eyecareapp.ui.components.EyeCareTopBar
 import example.hotaku.eyecareapp.ui.theme.EyeCareAppTheme
+import example.hotaku.eyecareapp.utils.activity
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -57,7 +58,8 @@ fun TimerScreen(
 
     LaunchedEffect(key1 = true) {
         viewModel.stopServiceChannel.collectLatest { isRun ->
-            if (!isRun) viewModel.onEvent(TimerScreenEvent.UnbindService(context))
+            if (isRun) return@collectLatest
+            context.activity()?.finish()
         }
     }
 

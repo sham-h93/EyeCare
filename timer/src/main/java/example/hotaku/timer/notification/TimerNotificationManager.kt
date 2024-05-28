@@ -77,7 +77,7 @@ class TimerNotificationManager(private val service: TimerService): BroadcastRece
         context: Context,
         title: String,
         content: String,
-        isRun: Boolean
+        isTimerRun: Boolean
     ): Notification {
 
         var smallIcon = R.drawable.all_visible
@@ -85,7 +85,7 @@ class TimerNotificationManager(private val service: TimerService): BroadcastRece
         var actionText = context.getString(R.string.service_notification_start_timer)
         var actionIntent = startTimerIntent
         
-        if(isRun) { 
+        if(isTimerRun) {
             actionIcon = R.drawable.all_pause
             actionText = context.getString(R.string.service_notification_stop_timer)
             actionIntent = stopTimerIntent
