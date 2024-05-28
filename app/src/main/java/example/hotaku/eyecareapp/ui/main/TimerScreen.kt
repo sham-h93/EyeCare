@@ -127,7 +127,7 @@ fun TimerScreen(
                 ),
                 onClick = {
                     when (state.isTimerStarted) {
-                        true -> viewModel.onEvent(TimerScreenEvent.StopTimer(context))
+                        true -> viewModel.onEvent(TimerScreenEvent.StopTimer)
                         false -> viewModel.onEvent(TimerScreenEvent.StartTimer(context))
                     }
                 }

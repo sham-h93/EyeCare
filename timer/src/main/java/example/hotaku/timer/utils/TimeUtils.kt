@@ -11,5 +11,8 @@ object TimeUtils {
         return String.format(Locale(Locale.US.language), "%02d:%02d", minutes, seconds)
 
     }
+
+    fun millisToProgressValue(timerValue: Pair<Long?, Boolean>) = timerValue.first!!.toFloat() / if (timerValue.second) TimerUtils.BREAK_TIMER_MILLISECODS else TimerUtils.CONTINUE_TIMER_MILLISECONDS
+
 }
 

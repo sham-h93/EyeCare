@@ -13,15 +13,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import example.hotaku.timer.service.TimerService
+import example.hotaku.timer.utils.TimeUtils.millisToProgressValue
 import example.hotaku.timer.utils.TimeUtils.toTimeFormat
-import example.hotaku.timer.utils.TimerUtils.BREAK_TIMER_MILLISECODS
-import example.hotaku.timer.utils.TimerUtils.CONTINUE_TIMER_MILLISECONDS
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.consumeAsFlow
-import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -43,14 +38,12 @@ class TimerScreenViewModel @Inject constructor(): ViewModel() {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             this@TimerScreenViewModel.service = service as TimerService.LocalBinder
             timerValue  = service.getService().timeer
-            state = state.copy(isServiceStarted = true)
             consumeChannelData()
             collectTimeData()
         }
 
-        override fun onServiceDisconnected(name: ComponentName?) {
-//            state = state.copy(isServiceStarted = false)
-        }
+        override fun onServiceDisconnected(name: ComponentName?) {}
+
     }
 
     private fun consumeChannelData() {
@@ -66,7 +59,7 @@ class TimerScreenViewModel @Inject constructor(): ViewModel() {
         when(event) {
             is TimerScreenEvent.StartService -> startService(event.context)
             is TimerScreenEvent.StartTimer -> startTimer(event.context)
-            is TimerScreenEvent.StopTimer -> stopTimer(event.context)
+            is TimerScreenEvent.StopTimer -> stopTimer()
             is TimerScreenEvent.UnbindService -> unBindService(event.context)
         }
     }
@@ -81,17 +74,16 @@ class TimerScreenViewModel @Inject constructor(): ViewModel() {
 
     private fun collectTimeData() {
         viewModelScope.launch {
-            timerValue.collect {
-                if (it.first == null) {
+            timerValue.collect { timerValue ->
+                if (timerValue.first == null) {
                     state = TimerScreenState()
                 } else {
-                    val value = it.first!!.toFloat() / if (state.isBreak) BREAK_TIMER_MILLISECODS else CONTINUE_TIMER_MILLISECONDS
+                    val value = millisToProgressValue(timerValue)
                     state = state.copy(
-                        isServiceStarted = true,
                         isTimerStarted = true,
-                        isBreak = it.second,
+                        isBreak = timerValue.second,
                         progress = 1 - value,
-                        time = it.first!!.toTimeFormat()
+                        time = timerValue.first!!.toTimeFormat()
                     )
                 }
             }
@@ -103,13 +95,11 @@ class TimerScreenViewModel @Inject constructor(): ViewModel() {
         service?.getService()?.startTimer()
     }
 
-    private fun stopTimer(context: Context) {
+    private fun stopTimer() {
         service?.getService()?.stopTimer()
         state = TimerScreenState()
     }
 
-    private fun unBindService(context: Context) {
-        context.unbindService(serviceConnection)
-    }
+    private fun unBindService(context: Context) = context.unbindService(serviceConnection)
 
 }

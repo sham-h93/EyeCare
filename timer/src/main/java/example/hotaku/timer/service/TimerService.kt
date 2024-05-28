@@ -29,8 +29,6 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class TimerService : Service() {
 
-    val TAG = ::TimerService.name
-
     private var _timeer = MutableSharedFlow<Pair<Long?, Boolean>>()
     val timeer = _timeer.asSharedFlow()
 
@@ -57,15 +55,11 @@ class TimerService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Log.e(TAG, "onStartCommand", )
         startForegroundOwnService()
         return START_STICKY
     }
 
-    override fun onBind(intent: Intent?): IBinder {
-        Log.e(TAG, "onBind", )
-        return localBinder
-    }
+    override fun onBind(intent: Intent?): IBinder = localBinder
 
     private fun startForegroundOwnService() {
         val notification = timerNotification(
@@ -113,8 +107,9 @@ class TimerService : Service() {
         )
     }
 
-    private fun emitTimerValues(tick: Long, isBreak: Boolean) =
+    private fun emitTimerValues(tick: Long, isBreak: Boolean) {
         scope.launch { _timeer.emit(tick to isBreak) }
+    }
 
     private fun notify(title: String, content: String,isTimerRun: Boolean = false) {
         val notification = timerNotification(title = title, content = content, isTimerRun = isTimerRun)
@@ -131,16 +126,13 @@ class TimerService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.e(TAG, "onDestroy", )
         scope.cancel()
-        Log.e(TAG, "onDestroy 2", )
         Toast.makeText(this, "Service Stopped", Toast.LENGTH_SHORT).show()
     }
 
     fun startTimer() = continueTimer()
 
     fun stopTimer() {
-        Log.e(TAG, "stopTimer", )
         cancelTimer()
         scope.launch { _timeer.emit(null to false) }
         notify(

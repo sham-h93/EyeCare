@@ -7,10 +7,10 @@ import example.hotaku.timer.service.TimerService
 
 object TimerUtils {
 
-    private const val MILLIS_INTERVAL = 1000L
     private var timer: CountDownTimer? = null
-    val CONTINUE_TIMER_MILLISECONDS = 1_200_000L
-    val BREAK_TIMER_MILLISECODS = 20_000L
+    private const val MILLIS_INTERVAL = 1000L
+    const val CONTINUE_TIMER_MILLISECONDS = 1_200_000L
+    const val BREAK_TIMER_MILLISECODS = 20_000L
 
     private fun getInstance(
         millisInFuture: Long,
