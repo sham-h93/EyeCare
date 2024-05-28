@@ -16,8 +16,13 @@ import example.hotaku.timer.service.TimerService
 import example.hotaku.timer.utils.TimeUtils.toTimeFormat
 import example.hotaku.timer.utils.TimerUtils.BREAK_TIMER_MILLISECODS
 import example.hotaku.timer.utils.TimerUtils.CONTINUE_TIMER_MILLISECONDS
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.flow.last
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,16 +31,20 @@ class TimerScreenViewModel @Inject constructor(): ViewModel() {
 
     private lateinit var serviceIntent: Intent
     private var service: TimerService.LocalBinder? = null
-    private lateinit var timerValue: SharedFlow<Pair<Long, Boolean>>
+    private lateinit var timerValue: SharedFlow<Pair<Long?, Boolean>>
 
     var state by mutableStateOf(TimerScreenState())
         private set
+
+    private var _stopServiceChannel = Channel<Boolean>()
+    val stopServiceChannel = _stopServiceChannel.receiveAsFlow()
 
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             state = state.copy(isServiceStarted = true)
             this@TimerScreenViewModel.service = service as TimerService.LocalBinder
-            timerValue  = service.getService().timeer.asSharedFlow()
+            timerValue  = service.getService().timeer
+            consumeChannelData()
             collectTimeData()
         }
 
@@ -44,12 +53,21 @@ class TimerScreenViewModel @Inject constructor(): ViewModel() {
         }
     }
 
+    private fun consumeChannelData() {
+        viewModelScope.launch {
+            service?.getService()?.isRun?.collect { isRun ->
+                _stopServiceChannel.send(isRun)
+                state = TimerScreenState()
+            }
+        }
+    }
+
     fun onEvent(event: TimerScreenEvent) {
         when(event) {
             is TimerScreenEvent.StartService -> startService(event.context)
             is TimerScreenEvent.StartTimer -> startTimer(event.context)
-            is TimerScreenEvent.StopTimer -> stopTimer()
-            is TimerScreenEvent.StopService -> stopService(event.context)
+            is TimerScreenEvent.StopTimer -> stopTimer(event.context)
+            is TimerScreenEvent.UnbindService -> unBindService(event.context)
         }
     }
 
@@ -64,32 +82,34 @@ class TimerScreenViewModel @Inject constructor(): ViewModel() {
     private fun collectTimeData() {
         viewModelScope.launch {
             timerValue.collect {
-                val value = it.first.toFloat() / if(state.isBreak) BREAK_TIMER_MILLISECODS else CONTINUE_TIMER_MILLISECONDS
-                state = state.copy(
-                    isTimerStarted = true,
-                    isBreak = it.second,
-                    progress = 1 - value,
-                    time = it.first.toTimeFormat()
-                )
+                if (it.first == null) {
+                    state = TimerScreenState()
+                } else {
+                    val value = it.first!!.toFloat() / if (state.isBreak) BREAK_TIMER_MILLISECODS else CONTINUE_TIMER_MILLISECONDS
+                    state = state.copy(
+                        isServiceStarted = true,
+                        isTimerStarted = true,
+                        isBreak = it.second,
+                        progress = 1 - value,
+                        time = it.first!!.toTimeFormat()
+                    )
+                }
             }
         }
     }
 
     private fun startTimer(context: Context) {
-        if (!state.isServiceStarted) {
-            context.bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
-        }
+        startService(context)
         service?.getService()?.startTimer()
     }
 
-
-    private fun stopTimer() {
+    private fun stopTimer(context: Context) {
         service?.getService()?.stopTimer()
         state = TimerScreenState()
     }
 
-    private fun stopService(context: Context) {
-        context.unbindService(serviceConnection)
+    private fun unBindService(context: Context) {
+        if (state.isServiceStarted) context.unbindService(serviceConnection)
     }
 
 }

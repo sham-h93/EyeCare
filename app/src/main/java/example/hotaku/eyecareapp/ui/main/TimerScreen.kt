@@ -36,6 +36,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import example.hotaku.eyecareapp.R
 import example.hotaku.eyecareapp.ui.components.EyeCareTopBar
 import example.hotaku.eyecareapp.ui.theme.EyeCareAppTheme
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun TimerScreen(
@@ -50,7 +51,13 @@ fun TimerScreen(
     DisposableEffect(key1 = true) {
         viewModel.onEvent(TimerScreenEvent.StartService(context))
         onDispose {
-            viewModel.onEvent(TimerScreenEvent.StopService(context))
+            viewModel.onEvent(TimerScreenEvent.UnbindService(context))
+        }
+    }
+
+    LaunchedEffect(key1 = true) {
+        viewModel.stopServiceChannel.collectLatest { isRun ->
+            if (!isRun) viewModel.onEvent(TimerScreenEvent.UnbindService(context))
         }
     }
 
@@ -118,7 +125,7 @@ fun TimerScreen(
                 ),
                 onClick = {
                     when (state.isTimerStarted) {
-                        true -> viewModel.onEvent(TimerScreenEvent.StopTimer)
+                        true -> viewModel.onEvent(TimerScreenEvent.StopTimer(context))
                         false -> viewModel.onEvent(TimerScreenEvent.StartTimer(context))
                     }
                 }
