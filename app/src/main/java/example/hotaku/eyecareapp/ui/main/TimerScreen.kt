@@ -1,5 +1,6 @@
 package example.hotaku.eyecareapp.ui.main
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,6 +38,7 @@ import example.hotaku.eyecareapp.R
 import example.hotaku.eyecareapp.ui.components.EyeCareTopBar
 import example.hotaku.eyecareapp.ui.theme.EyeCareAppTheme
 import example.hotaku.eyecareapp.utils.activity
+import example.hotaku.eyecareapp.utils.openGithubPage
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -66,7 +68,18 @@ fun TimerScreen(
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
-            EyeCareTopBar(title = "20-20-20")
+            EyeCareTopBar(
+                title = "20-20-20",
+                actions = {
+                    Icon(
+                        modifier = Modifier
+                            .padding(end = 16.dp)
+                            .clickable { context.openGithubPage() },
+                        painter = painterResource(id = R.drawable.main_screen_github),
+                        contentDescription = "Info"
+                    )
+                }
+            )
         }) { paddingValues ->
         Column(
             modifier = Modifier
