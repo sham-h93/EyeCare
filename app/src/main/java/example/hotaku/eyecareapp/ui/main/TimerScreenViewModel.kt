@@ -12,8 +12,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import example.hotaku.eyecareapp.utils.millisToProgressValue
 import example.hotaku.timer.service.TimerService
-import example.hotaku.timer.utils.TimeUtils.millisToProgressValue
 import example.hotaku.timer.utils.TimeUtils.toTimeFormat
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.SharedFlow
