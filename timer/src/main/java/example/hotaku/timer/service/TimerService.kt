@@ -9,7 +9,6 @@ import android.content.pm.ServiceInfo
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
-import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ServiceCompat
 import dagger.hilt.android.AndroidEntryPoint
@@ -64,7 +63,8 @@ class TimerService : Service() {
     private fun startForegroundOwnService() {
         val notification = timerNotification(
             title = getString(R.string.service_notification_service_ready),
-            content = getString(R.string.service_notification_you_can_start_timer)
+            content = getString(R.string.service_notification_you_can_start_timer),
+            isSilent = true
         )
         try {
             ServiceCompat.startForeground(
@@ -80,6 +80,12 @@ class TimerService : Service() {
     }
 
     private fun continueTimer() {
+        notify(
+            title = getString(R.string.service_notification_service_timer_is_running),
+            content = getString(R.string.service_notification_service_timer_continue),
+            isTimerRun = true,
+            isSilent = false
+        )
         TimerUtils.continueTimer(
             onTick = { tick ->
                 notify(
@@ -94,6 +100,12 @@ class TimerService : Service() {
     }
 
     private fun breakTimer() {
+        notify(
+            title = getString(R.string.service_notification_service_timer_is_running),
+            content = getString(R.string.service_notification_service_timer_break),
+            isTimerRun = true,
+            isSilent = false
+        )
         TimerUtils.breakTimer(
             onTick = { tick ->
                 notify(
@@ -111,17 +123,24 @@ class TimerService : Service() {
         scope.launch { _timeer.emit(tick to isBreak) }
     }
 
-    private fun notify(title: String, content: String,isTimerRun: Boolean = false) {
-        val notification = timerNotification(title = title, content = content, isTimerRun = isTimerRun)
+
+    private fun notify(
+        title: String,
+        content: String,
+        isTimerRun: Boolean = false,
+        isSilent: Boolean = true
+    ) {
+        val notification = timerNotification(title = title, content = content, isTimerRun = isTimerRun, isSilent = isSilent)
         notificationManager.notify(TimerNotificationManager.NOTIFICATION_REQUEST_CODE, notification)
     }
 
-    private fun timerNotification(title: String, content: String, isTimerRun: Boolean = false): Notification =
+    private fun timerNotification(title: String, content: String, isTimerRun: Boolean = false, isSilent: Boolean): Notification =
         timerNotificationManager.createTimerNotification(
             context = this,
             title = title,
             content = content,
-            isTimerRun = isTimerRun
+            isTimerRun = isTimerRun,
+            isSilent = isSilent
         )
 
     override fun onDestroy() {
@@ -138,6 +157,7 @@ class TimerService : Service() {
         notify(
             title = getString(R.string.service_notification_service_ready),
             content = getString(R.string.service_notification_you_can_start_timer),
+            isSilent = true,
         )
     }
 

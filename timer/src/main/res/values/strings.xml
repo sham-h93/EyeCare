@@ -5,4 +5,6 @@
     <string name="service_notification_you_can_start_timer">You can start timer now</string>
     <string name="service_notification_service_ready">Ready!</string>
     <string name="service_notification_service_timer_is_running">Timer is Running</string>
+    <string name="service_notification_service_timer_continue">You can continue</string>
+    <string name="service_notification_service_timer_break">Take a break</string>
 </resources>

@@ -9,10 +9,13 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.media.AudioAttributes
+import android.net.Uri
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import example.hotaku.timer.R
 import example.hotaku.timer.service.TimerService
+
 
 @SuppressLint("UnspecifiedRegisterReceiverFlag")
 class TimerNotificationManager(private val service: TimerService): BroadcastReceiver() {
@@ -21,6 +24,7 @@ class TimerNotificationManager(private val service: TimerService): BroadcastRece
     private var stopTimerIntent: PendingIntent? = null
     private var stopServiceIntent: PendingIntent? = null
 
+    private val notificationSound: Uri by lazy { Uri.parse("android.resource://" + service.packageName + "/" + R.raw.notification) }
 
     override fun onReceive(context: Context?, intent: Intent?) {
         intent?.let {
@@ -40,6 +44,8 @@ class TimerNotificationManager(private val service: TimerService): BroadcastRece
 
 
     init {
+
+        createNotificationChannel(service)
 
         startTimerIntent = PendingIntent.getBroadcast(
             service,
@@ -77,7 +83,8 @@ class TimerNotificationManager(private val service: TimerService): BroadcastRece
         context: Context,
         title: String,
         content: String,
-        isTimerRun: Boolean
+        isTimerRun: Boolean,
+        isSilent: Boolean
     ): Notification {
 
         var smallIcon = R.drawable.all_visible
@@ -93,32 +100,40 @@ class TimerNotificationManager(private val service: TimerService): BroadcastRece
             smallIcon = R.drawable.all_invisible
         }
 
-        createNotificationChannel(context)
         return NotificationCompat.Builder(context, CHANNEL_ID)
             .addAction(actionIcon, actionText, actionIntent)
             .addAction(R.drawable.all_close, context.getString(R.string.service_notification_stop_service), stopServiceIntent)
             .setSmallIcon(smallIcon)
             .setContentTitle(title)
+            .setPriority(NotificationCompat.PRIORITY_HIGH) // this value ignored in api 26 above so we set it in NotificationChannel
+            .setSound(notificationSound) // this value ignored in api 26 above so we set it in NotificationChannel
+            .setSilent(isSilent)
             .setContentText(content)
-            .setOnlyAlertOnce(true)
             .build()
     }
 
-    private fun createNotificationChannel(context: Context) {
+    fun createNotificationChannel(context: Context) {
+        val audioAttributes = buildAudioAttributes()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val importance = NotificationManager.IMPORTANCE_HIGH
-            val mChannel = NotificationChannel(CHANNEL_ID, CHANNEL_NAME, importance)
-            val notificationManager =
-                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val mChannel = NotificationChannel(CHANNEL_ID, CHANNEL_NAME, importance).apply {
+                setSound(notificationSound, audioAttributes)
+            }
+            val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(mChannel)
         }
     }
+
+    private fun buildAudioAttributes(): AudioAttributes = AudioAttributes.Builder()
+        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+        .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+        .build()
 
     companion object {
 
         const val CHANNEL_ID = "202020app"
         const val CHANNEL_NAME = "20-20-20 Service notification"
-        const val NOTIFICATION_REQUEST_CODE = 132
+        const val NOTIFICATION_REQUEST_CODE = 100
 
         const val ACTION_START_TIMER = "startTimer"
         const val ACTION_STOP_TIMER = "stopTimer"
