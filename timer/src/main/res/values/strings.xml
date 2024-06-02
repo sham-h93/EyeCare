@@ -7,4 +7,5 @@
     <string name="service_notification_service_timer_is_running">Timer is Running</string>
     <string name="service_notification_service_timer_continue">You can continue</string>
     <string name="service_notification_service_timer_break">Take a break</string>
+    <string name="service_toast_service_stopped">Service Stopped</string>
 </resources>

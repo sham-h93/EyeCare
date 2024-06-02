@@ -1,6 +1,5 @@
 package example.hotaku.timer.service
 
-import android.app.Notification
 import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
@@ -61,7 +60,7 @@ class TimerService : Service() {
     override fun onBind(intent: Intent?): IBinder = localBinder
 
     private fun startForegroundOwnService() {
-        val notification = timerNotification(
+        val notification = timerNotificationManager.getTimerNotification(
             title = getString(R.string.service_notification_service_ready),
             content = getString(R.string.service_notification_you_can_start_timer),
             isSilent = true
@@ -130,23 +129,19 @@ class TimerService : Service() {
         isTimerRun: Boolean = false,
         isSilent: Boolean = true
     ) {
-        val notification = timerNotification(title = title, content = content, isTimerRun = isTimerRun, isSilent = isSilent)
-        notificationManager.notify(TimerNotificationManager.NOTIFICATION_REQUEST_CODE, notification)
-    }
-
-    private fun timerNotification(title: String, content: String, isTimerRun: Boolean = false, isSilent: Boolean): Notification =
-        timerNotificationManager.createTimerNotification(
-            context = this,
+        val notification = timerNotificationManager.getTimerNotification(
             title = title,
             content = content,
             isTimerRun = isTimerRun,
             isSilent = isSilent
         )
+        notificationManager.notify(TimerNotificationManager.NOTIFICATION_REQUEST_CODE, notification)
+    }
 
     override fun onDestroy() {
         super.onDestroy()
         scope.cancel()
-        Toast.makeText(this, "Service Stopped", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, getString(R.string.service_toast_service_stopped), Toast.LENGTH_SHORT).show()
     }
 
     fun startTimer() = continueTimer()

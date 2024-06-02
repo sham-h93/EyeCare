@@ -79,7 +79,7 @@ class TimerNotificationManager(private val service: TimerService): BroadcastRece
         } else  service.registerReceiver(this, filters)
     }
 
-    fun createTimerNotification(
+    fun buildTimerNotification(
         context: Context,
         title: String,
         content: String,
@@ -128,6 +128,19 @@ class TimerNotificationManager(private val service: TimerService): BroadcastRece
         .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
         .setUsage(AudioAttributes.USAGE_NOTIFICATION)
         .build()
+
+    fun getTimerNotification(
+        title: String,
+        content: String,
+        isTimerRun: Boolean = false,
+        isSilent: Boolean
+    ): Notification = buildTimerNotification(
+        context = service,
+        title = title,
+        content = content,
+        isTimerRun = isTimerRun,
+        isSilent = isSilent
+    )
 
     companion object {
 
