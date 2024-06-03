@@ -76,6 +76,7 @@ dependencies {
     kapt(libs.hilt.kapt)
     implementation(libs.hilt.navigation)
     implementation(libs.androidx.core.splashscreen)
+    implementation(libs.google.accompanist.permissions)
 
     implementation(project(":timer"))
 

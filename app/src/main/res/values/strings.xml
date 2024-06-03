@@ -9,4 +9,5 @@
     <string name="service_notification_you_can_start_timer">You can start timer now</string>
     <string name="service_notification_service_ready">Ready!</string>
     <string name="service_notification_service_timer_is_running">Timer is Running</string>
+    <string name="timer_screen_revoked_notification_message"><![CDATA[You have to grant notification permission from settings > Apps > EyeCareApp to control the app from notification if it in background!]]></string>
 </resources>

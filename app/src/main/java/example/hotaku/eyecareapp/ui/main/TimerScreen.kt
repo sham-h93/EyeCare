@@ -1,5 +1,9 @@
 package example.hotaku.eyecareapp.ui.main
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
@@ -24,6 +29,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -33,7 +39,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberPermissionState
 import example.hotaku.eyecareapp.R
 import example.hotaku.eyecareapp.ui.components.EyeCareTopBar
 import example.hotaku.eyecareapp.ui.theme.EyeCareAppTheme
@@ -41,6 +50,7 @@ import example.hotaku.eyecareapp.utils.activity
 import example.hotaku.eyecareapp.utils.openGithubPage
 import kotlinx.coroutines.flow.collectLatest
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun TimerScreen(
     modifier: Modifier = Modifier,
@@ -50,6 +60,17 @@ fun TimerScreen(
     val state = viewModel.state
     val context = LocalContext.current
     val stateColor = if (state.isBreak) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+
+    // request notification permissions if API level 33 or higher
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+
+        val permissionState = rememberPermissionState(permission = Manifest.permission.POST_NOTIFICATIONS)
+
+        LaunchedEffect(key1 = permissionState) {
+            permissionState.launchPermissionRequest()
+        }
+
+    }
 
     DisposableEffect(key1 = true) {
         viewModel.onEvent(TimerScreenEvent.StartService(context))
@@ -88,6 +109,19 @@ fun TimerScreen(
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
+            if (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                Text(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(size = 12.dp))
+                        .background(MaterialTheme.colorScheme.error.copy(alpha = .2f))
+                        .padding(8.dp),
+                    text = stringResource(R.string.timer_screen_revoked_notification_message),
+                    style = MaterialTheme.typography.bodySmall,
+                    textAlign = TextAlign.Center
+                )
+            }
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
