@@ -90,7 +90,7 @@ fun TimerScreen(
         modifier = modifier.fillMaxSize(),
         topBar = {
             EyeCareTopBar(
-                title = "20-20-20",
+                title = stringResource(id = R.string.app_name),
                 actions = {
                     Icon(
                         modifier = Modifier
@@ -154,8 +154,8 @@ fun TimerScreen(
                     fontSize = 24.sp,
                     color = stateColor,
                     text = when (state.isBreak) {
-                        true -> "BREAK"
-                        false -> "CONTINUE"
+                        true -> stringResource(R.string.timer_screen_message_break)
+                        false -> stringResource(R.string.timer_screen_message_continue)
                     }
                 )
             }
@@ -183,8 +183,8 @@ fun TimerScreen(
                     modifier = Modifier.padding(8.dp),
                     fontSize = 24.sp,
                     text = when (state.isTimerStarted) {
-                        true -> "STOP"
-                        false -> "START"
+                        true -> stringResource(R.string.timer_screen_button_stop)
+                        false -> stringResource(R.string.timer_screen_button_start)
                     }
                 )
             }
