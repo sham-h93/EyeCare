@@ -44,11 +44,11 @@ class TimerScreenViewModel @Inject constructor(
         viewModelScope.launch {
             serviceRepository.bindService().collect { serviceBinder ->
                 service = serviceBinder
-               service?.getService()?.timeer?.let {
-                   timerValue = it
-                   consumeChannelData()
-                   collectTimeData()
-               }
+                service?.getService()?.timeer?.let {
+                    timerValue = it
+                    consumeChannelData()
+                    collectTimeData()
+                }
             }
         }
     }

@@ -10,7 +10,6 @@ import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
 import example.hotaku.timer.service.TimerService
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
@@ -18,13 +17,11 @@ import javax.inject.Inject
 class ServiceRepositoryImpl @Inject constructor(@ApplicationContext private val context: Context): ServiceRepository {
 
     private lateinit var serviceIntent: Intent
-    private var service: TimerService.LocalBinder? = null
-    private lateinit var timerValue: SharedFlow<Pair<Long?, Boolean>>
+    private lateinit var service: TimerService.LocalBinder
 
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             this@ServiceRepositoryImpl.service = service as TimerService.LocalBinder
-            timerValue  = service.getService().timeer
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {}
