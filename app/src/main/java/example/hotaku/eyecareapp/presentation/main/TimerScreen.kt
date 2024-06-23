@@ -1,4 +1,4 @@
-package example.hotaku.eyecareapp.ui.main
+package example.hotaku.eyecareapp.presentation.main
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -44,10 +44,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
 import example.hotaku.eyecareapp.R
-import example.hotaku.eyecareapp.ui.components.EyeCareTopBar
+import example.hotaku.eyecareapp.presentation.components.EyeCareTopBar
 import example.hotaku.eyecareapp.ui.theme.EyeCareAppTheme
-import example.hotaku.eyecareapp.utils.activity
-import example.hotaku.eyecareapp.utils.openGithubPage
+import example.hotaku.eyecareapp.presentation.utils.activity
+import example.hotaku.eyecareapp.presentation.utils.openGithubPage
 import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalPermissionsApi::class)

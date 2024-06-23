@@ -6,7 +6,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import example.hotaku.eyecareapp.ui.main.TimerScreen
+import example.hotaku.eyecareapp.presentation.main.TimerScreen
 
 @Composable
 fun MainNav(

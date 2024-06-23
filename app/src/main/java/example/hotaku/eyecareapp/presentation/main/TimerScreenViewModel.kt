@@ -1,4 +1,4 @@
-package example.hotaku.eyecareapp.ui.main
+package example.hotaku.eyecareapp.presentation.main
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import example.hotaku.eyecareapp.utils.millisToProgressValue
+import example.hotaku.eyecareapp.presentation.utils.millisToProgressValue
 import example.hotaku.timer.repository.ServiceRepository
 import example.hotaku.timer.service.TimerService
 import example.hotaku.timer.utils.TimeUtils.toTimeFormat

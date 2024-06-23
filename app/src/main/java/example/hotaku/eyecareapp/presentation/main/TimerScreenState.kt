@@ -1,4 +1,4 @@
-package example.hotaku.eyecareapp.ui.main
+package example.hotaku.eyecareapp.presentation.main
 
 data class TimerScreenState(
     val isTimerStarted: Boolean = false,

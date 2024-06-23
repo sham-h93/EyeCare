@@ -1,4 +1,4 @@
-package example.hotaku.eyecareapp.utils
+package example.hotaku.eyecareapp.presentation.utils
 
 import example.hotaku.timer.utils.TimerUtils
 

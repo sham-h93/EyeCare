@@ -1,4 +1,4 @@
-package example.hotaku.eyecareapp.ui.components
+package example.hotaku.eyecareapp.presentation.components
 
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth

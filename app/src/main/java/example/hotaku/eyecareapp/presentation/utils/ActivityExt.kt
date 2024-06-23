@@ -1,4 +1,4 @@
-package example.hotaku.eyecareapp.utils
+package example.hotaku.eyecareapp.presentation.utils
 
 import android.app.Activity
 import android.content.Context
