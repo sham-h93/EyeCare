@@ -10,6 +10,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.media.AudioAttributes
+import android.media.AudioManager
 import android.net.Uri
 import android.os.Build
 import androidx.core.app.NotificationCompat
@@ -106,7 +107,7 @@ class TimerNotificationManager(private val service: TimerService): BroadcastRece
             .setSmallIcon(smallIcon)
             .setContentTitle(title)
             .setPriority(NotificationCompat.PRIORITY_HIGH) // this value ignored in api 26 above so we set it in NotificationChannel
-            .setSound(notificationSound) // this value ignored in api 26 above so we set it in NotificationChannel
+            .setSound(notificationSound, AudioManager.STREAM_NOTIFICATION) // this value ignored in api 26 above so we set it in NotificationChannel
             .setSilent(isSilent)
             .setContentText(content)
             .build()
