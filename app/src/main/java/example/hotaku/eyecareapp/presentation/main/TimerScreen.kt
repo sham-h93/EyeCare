@@ -1,6 +1,7 @@
 package example.hotaku.eyecareapp.presentation.main
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.compose.foundation.background
@@ -42,6 +43,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import example.hotaku.eyecareapp.R
 import example.hotaku.eyecareapp.presentation.components.EyeCareTopBar
@@ -50,6 +52,7 @@ import example.hotaku.eyecareapp.presentation.utils.activity
 import example.hotaku.eyecareapp.presentation.utils.openGithubPage
 import kotlinx.coroutines.flow.collectLatest
 
+@SuppressLint("InlinedApi")
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun TimerScreen(
@@ -61,10 +64,10 @@ fun TimerScreen(
     val context = LocalContext.current
     val stateColor = if (state.isBreak) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
 
+    val permissionState = rememberPermissionState(permission = Manifest.permission.POST_NOTIFICATIONS)
+
     // request notification permissions if API level 33 or higher
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-
-        val permissionState = rememberPermissionState(permission = Manifest.permission.POST_NOTIFICATIONS)
 
         LaunchedEffect(key1 = permissionState) {
             permissionState.launchPermissionRequest()
@@ -110,7 +113,7 @@ fun TimerScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            if (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            if (!permissionState.status.isGranted) {
                 Text(
                     modifier = Modifier
                         .clip(RoundedCornerShape(size = 12.dp))
