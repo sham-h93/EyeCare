@@ -1,9 +1,6 @@
-package example.hotaku.timer.utils
+package com.hotaku.common
 
 import android.os.CountDownTimer
-import android.util.Log
-import example.hotaku.timer.utils.TimeUtils.toTimeFormat
-import example.hotaku.timer.service.TimerService
 
 object TimerUtils {
 
@@ -19,7 +16,6 @@ object TimerUtils {
     ): CountDownTimer = object : CountDownTimer(millisInFuture, MILLIS_INTERVAL) {
         override fun onTick(millisUntilFinished: Long) {
             onTick(millisUntilFinished)
-            Log.e(::TimerService.name, "onTick: ${millisUntilFinished.toTimeFormat()}")
         }
 
         override fun onFinish() {

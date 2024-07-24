@@ -1,4 +1,4 @@
-package example.hotaku.timer.utils
+package com.hotaku.common
 
 import java.util.Locale
 import java.util.concurrent.TimeUnit
