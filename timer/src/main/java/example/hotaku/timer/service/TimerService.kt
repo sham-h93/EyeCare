@@ -13,9 +13,9 @@ import androidx.core.app.ServiceCompat
 import dagger.hilt.android.AndroidEntryPoint
 import example.hotaku.timer.R
 import example.hotaku.timer.notification.TimerNotificationManager
-import example.hotaku.timer.utils.TimeUtils.toTimeFormat
-import example.hotaku.timer.utils.TimerUtils
-import example.hotaku.timer.utils.TimerUtils.cancelTimer
+import com.hotaku.common.TimeUtils.toTimeFormat
+import com.hotaku.common.TimerUtils
+import com.hotaku.common.TimerUtils.cancelTimer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob

@@ -9,7 +9,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import example.hotaku.eyecareapp.presentation.utils.millisToProgressValue
 import example.hotaku.timer.repository.ServiceRepository
 import example.hotaku.timer.service.TimerService
-import example.hotaku.timer.utils.TimeUtils.toTimeFormat
+import com.hotaku.common.TimeUtils.toTimeFormat
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.receiveAsFlow

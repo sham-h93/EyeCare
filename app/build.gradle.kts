@@ -79,6 +79,7 @@ dependencies {
     implementation(libs.google.accompanist.permissions)
 
     implementation(project(":timer"))
+    implementation(project(":common"))
 
 }
 kapt {

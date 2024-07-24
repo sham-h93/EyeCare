@@ -51,4 +51,6 @@ dependencies {
     implementation(libs.hilt)
     kapt(libs.hilt.kapt)
 
+    implementation(project(":common"))
+
 }

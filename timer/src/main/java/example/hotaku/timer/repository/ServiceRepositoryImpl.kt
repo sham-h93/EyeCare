@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
-class ServiceRepositoryImpl @Inject constructor(@ApplicationContext private val context: Context): ServiceRepository {
+internal class ServiceRepositoryImpl @Inject constructor(@ApplicationContext private val context: Context): ServiceRepository {
 
     private lateinit var serviceIntent: Intent
     private lateinit var service: TimerService.LocalBinder

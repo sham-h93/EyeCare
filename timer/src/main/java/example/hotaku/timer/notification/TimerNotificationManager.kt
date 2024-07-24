@@ -19,7 +19,7 @@ import example.hotaku.timer.service.TimerService
 
 
 @SuppressLint("UnspecifiedRegisterReceiverFlag")
-class TimerNotificationManager(private val service: TimerService): BroadcastReceiver() {
+internal class TimerNotificationManager(private val service: TimerService): BroadcastReceiver() {
 
     private var startTimerIntent: PendingIntent? = null
     private var stopTimerIntent: PendingIntent? = null

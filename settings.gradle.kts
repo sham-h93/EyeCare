@@ -22,3 +22,4 @@ dependencyResolutionManagement {
 rootProject.name = "EyeCareApp"
 include(":app")
 include(":timer")
+include(":common")
