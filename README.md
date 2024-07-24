@@ -7,3 +7,4 @@ A simple open-source project that shows how to implement and communicate with **
 This project contains 2 modules
 - :**app** module: includes TimerScreen and its ViewModel
 - :**timer** module: includes the TimerService (*The background service to run the timer even if the app closed*)
+- :**common** module: includes common objects and utils
